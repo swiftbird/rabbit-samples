@@ -1,0 +1,8 @@
+---
+applications:
+- name: rabbit-sandbox
+  
+services:
+  - rabbit
+  
+buildpack: java_buildpack
