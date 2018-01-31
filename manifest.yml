@@ -1,8 +1,8 @@
 ---
 applications:
-- name: rabbit-sandbox
+- name: disc-rabbit
   
 services:
   - rabbit
   
-buildpack: java_buildpack
+buildpack: java_buildpack_offline

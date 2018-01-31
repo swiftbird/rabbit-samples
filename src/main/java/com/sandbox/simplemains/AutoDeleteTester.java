@@ -35,6 +35,7 @@ public class AutoDeleteTester {
 		// arguments)
 
 		DeclareOk ok = channel.queueDeclare(QUEUE_NAME, false, false, true, null);
+		
 		if (ok.getConsumerCount() == 0) {
 
 			System.out.println(" [*] Waiting for messages. To exit press CTRL+C");

@@ -1,26 +1,20 @@
 package com.sandbox.services;
 
-import java.util.ArrayList;
+import java.io.IOException;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.UUID;
 
 import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
-import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.GetResponse;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rabbitmq.client.AMQP.BasicProperties;
-import com.sandbox.config.RabbitConfig;
-//import com.sandbox.config.RabbitConfiguration;
-import com.sandbox.config.RabbitConfiguration;
 import com.sandbox.model.GenericResponse;
 import com.sandbox.model.UsageRequest;
 
@@ -30,8 +24,12 @@ public class SandboxService {
 	private static final String WORK_QUEUE_NAME = "UsageWorkQueue";
 	private static final String PUBSUB_EXCHANGE_NAME = "PubSub";
 
-	@Autowired
-	private RabbitConfig rabbitConfig;
+
+	@Qualifier("rabbitConnection")
+	@Autowired 
+	private Connection rabbitConnection;
+	
+//	@Autowired Connection connection;
 
 	public SandboxService() {
 		
@@ -124,8 +122,10 @@ public class SandboxService {
 //		Connection connection = factory.newConnection();
 //		Channel channel = connection.createChannel();
 		
-		Channel channel = rabbitConfig.connectionFactory().rabbitConnectionFactory().createConnection()
-				.createChannel(false);
+//		Channel channel = rabbitConfig.connectionFactory().rabbitConnectionFactory().createConnection()
+//				.createChannel(false);
+		Channel channel = rabbitConnection.createChannel();
+		
 
 		channel.exchangeDeclare(PUBSUB_EXCHANGE_NAME, "fanout");
 		// Get a default queue (random name just for me)
@@ -193,8 +193,9 @@ public class SandboxService {
 
 		// Return the request with the uuid populated
 
-		Channel channel = rabbitConfig.connectionFactory().rabbitConnectionFactory().createConnection()
-				.createChannel(false);
+//		Channel channel = rabbitConfig.connectionFactory().rabbitConnectionFactory().createConnection()
+//				.createChannel(false);
+		Channel channel = rabbitConnection.createChannel();
 		System.out.println("Channel is: " + channel);
 		String message = request.toJSON();
 		channel.basicPublish("", WORK_QUEUE_NAME, null, message.getBytes("UTF-8"));
@@ -216,8 +217,9 @@ public class SandboxService {
 //		Connection connection = factory.newConnection();
 //		Channel channel = connection.createChannel();
 		
-		Channel channel = rabbitConfig.connectionFactory().rabbitConnectionFactory().createConnection()
-				.createChannel(false);
+//		Channel channel = rabbitConfig.connectionFactory().rabbitConnectionFactory().createConnection()
+//				.createChannel(false);
+		Channel channel = rabbitConnection.createChannel();
 
 		channel.exchangeDeclare(PUBSUB_EXCHANGE_NAME, "fanout");
 
@@ -230,15 +232,15 @@ public class SandboxService {
 		return response;
 	}
 
-	public GenericResponse ping() {
+	public GenericResponse ping() throws IOException {
 
 		GenericResponse response = new GenericResponse();
 		response.setResultCode("200");
 		response.setResultMessage("Connection Successful");
 
 		// ------
-		System.out.println("The connection factory is: " + rabbitConfig.connectionFactory());
-
+		Channel channel = rabbitConnection.createChannel();
+		
 		// -----
 		return response;
 
@@ -286,8 +288,10 @@ public class SandboxService {
 //		factory.setUri(uri);
 //		Connection connection = factory.newConnection();
 //		Channel channel = connection.createChannel();
-		Channel channel = rabbitConfig.connectionFactory().rabbitConnectionFactory().createConnection()
-				.createChannel(false);
+//		Channel channel = rabbitConfig.connectionFactory().rabbitConnectionFactory().createConnection()
+//				.createChannel(false);
+		Channel channel = rabbitConnection.createChannel();
+		
 		channel.queueDeclare(queueName, false, false, false, null);
 		return channel;	
 	}
@@ -297,8 +301,9 @@ public class SandboxService {
 //		factory.setUri(uri);
 //		Connection connection = factory.newConnection();
 //		Channel channel = connection.createChannel();
-		Channel channel = rabbitConfig.connectionFactory().rabbitConnectionFactory().createConnection()
-				.createChannel(false);
+//		Channel channel = rabbitConfig.connectionFactory().rabbitConnectionFactory().createConnection()
+//				.createChannel(false);
+		Channel channel = rabbitConnection.createChannel();
 		Map<String, Object> args = new HashMap<String, Object>();
 		// args.put("x-message-ttl", 60000);
 		args.put("x-expires", 120000);

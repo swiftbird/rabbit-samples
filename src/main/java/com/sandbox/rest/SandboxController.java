@@ -1,5 +1,7 @@
 package com.sandbox.rest;
 
+import java.io.IOException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -52,7 +54,7 @@ public class SandboxController {
 
 	@RequestMapping(value = "/ping", method = RequestMethod.GET)
 	@ResponseBody
-	public GenericResponse ping() {
+	public GenericResponse ping() throws IOException {
 		return sandboxSvc.ping();
 	}
 

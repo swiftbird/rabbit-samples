@@ -3,6 +3,7 @@ package com.sandbox;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.annotation.Bean;
 
 import springfox.documentation.builders.RequestHandlerSelectors;
@@ -15,14 +16,15 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 public class SandboxApplication {
 
 	public static void main(String[] args) {
+		// new SpringApplicationBuilder(SandboxApplication.class)
+		// .profiles("default")
+		// .run(args);
 		SpringApplication.run(SandboxApplication.class, args);
 	}
-	
-	 @Bean
-	    public Docket api() {
-	        return new Docket(DocumentationType.SWAGGER_2)
-	                .select()
-	                .apis(RequestHandlerSelectors.basePackage("com.sandbox"))
-	                .build();
-	    }
+
+	@Bean
+	public Docket api() {
+		return new Docket(DocumentationType.SWAGGER_2).select().apis(RequestHandlerSelectors.basePackage("com.sandbox"))
+				.build();
+	}
 }
